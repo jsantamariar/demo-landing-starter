@@ -1,13 +1,26 @@
+import React, {useRef} from 'react'
 import Head from 'next/head'
 
 import Layout from '@components/Layout';
 import Section from '@components/Section';
 import Container from '@components/Container';
-import Button from '@components/Button';
 
 import styles from '@styles/Home.module.scss'
+import { Observe } from 'src/helpers';
 
 export default function Home() {
+  const rocketRef = useRef();
+  const textRef = useRef();
+  const descriptionRef = useRef();
+  const [isRocketVisible, setIsRocketVisible] = React.useState(false);
+  const [isDescriptionVisible, setIsDescriptionVisible] = React.useState(false);
+
+  React.useEffect(() => {
+      Observe(descriptionRef, isDescriptionVisible, setIsDescriptionVisible);
+      Observe(rocketRef, isRocketVisible, setIsRocketVisible);
+  }, [isDescriptionVisible, isRocketVisible]); 
+
+    
   return (
     <Layout>
       <Head>
@@ -106,17 +119,20 @@ export default function Home() {
             Magic 🪄
           </h2>
 
-          <p>🚀</p>
+          <p ref={rocketRef}>
+            <span className={`${styles.rocket} ${isRocketVisible ? styles.rocketAnimation : ''}`}>
+              🚀
+            </span>  
+          </p>
         </Container>
       </Section>
 
       <Section backgroundColor="secondary">
         <Container>
-          <h2 className={styles.heading}>
-            Have you scrolled down here yet? 🧐
+          <h2 ref={textRef} className={styles.heading}>
+          { isDescriptionVisible ? " Have you scrolled down here yet? 🧐" : "It is visible"}
           </h2>
-
-          <p>IDK 🤷‍♂️</p>
+          <p ref={descriptionRef} {...(isDescriptionVisible ? {className: styles.animateDescription} : {className: styles.description}) }>Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.</p>
         </Container>
       </Section>
 
@@ -125,7 +141,6 @@ export default function Home() {
           <h2 className={styles.heading}>
             Call to Action
           </h2>
-
           <p>Sign up now!</p>
         </Container>
       </Section>
